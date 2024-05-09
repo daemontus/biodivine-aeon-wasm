@@ -56,7 +56,7 @@ impl ComputationResult {
             |task| {
                 let elapsed = Instant::now() - task.started;
                 on_progress
-                    .call0(&Self::get_results_internal(elapsed, task, &classifier))
+                    .call1(on_progress, &Self::get_results_internal(elapsed, task, &classifier))
                     .unwrap();
             },
         );
@@ -73,7 +73,7 @@ impl ComputationResult {
             |task| {
                 let elapsed = Instant::now() - task.started;
                 on_progress
-                    .call0(&Self::get_results_internal(elapsed, task, &classifier))
+                    .call1(on_progress, &Self::get_results_internal(elapsed, task, &classifier))
                     .unwrap();
             },
         );
