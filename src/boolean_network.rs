@@ -33,7 +33,7 @@ pub(crate) struct VariableData {
 
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize)]
-struct RegulationData {
+pub(crate) struct RegulationData {
     source: u64,
     target: u64,
     observable: bool,
@@ -43,7 +43,7 @@ struct RegulationData {
 
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize)]
-struct UpdateFunctionData {
+pub(crate) struct UpdateFunctionData {
     raw_string: String,
 }
 

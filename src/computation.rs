@@ -1,16 +1,21 @@
+use biodivine_lib_bdd::Bdd;
+use std::collections::HashMap;
 use std::time::Duration;
 
-use biodivine_lib_param_bn::symbolic_async_graph::SymbolicAsyncGraph;
+use biodivine_lib_param_bn::symbolic_async_graph::{GraphColors, SymbolicAsyncGraph};
 use biodivine_lib_param_bn::BooleanNetwork;
 use instant::Instant;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+use serde::Serialize;
+
+use crate::bdt::Bdt;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 
 use crate::graph_task_context::GraphTaskContext;
 use crate::scc::algo_interleaved_transition_guided_reduction::interleaved_transition_guided_reduction;
 use crate::scc::algo_xie_beerel::xie_beerel_attractors;
-use crate::scc::{Behaviour, Classifier};
+use crate::scc::{Behaviour, Class, Classifier};
 
 #[wasm_bindgen]
 pub struct ComputationResult {
@@ -19,6 +24,13 @@ pub struct ComputationResult {
     classifier: Classifier,
     task: GraphTaskContext,
     elapsed: Duration,
+}
+
+#[wasm_bindgen]
+#[derive(Serialize, Deserialize)]
+pub struct TreeData {
+    network: String,
+    data: HashMap<Class, Vec<u8>>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -99,9 +111,16 @@ impl ComputationResult {
         Self::get_results_internal(self.elapsed, &self.task, &self.classifier)
     }
 
-    /*pub fn build_tree(&self) -> Bdt {
-        Bdt::new_from_graph(self.classifier.export_result(), &self.graph, &self.network)
-    }*/
+    pub fn get_tree_data(&self) -> TreeData {
+        let mut serialized_data = HashMap::new();
+        for (k, v) in self.classifier.export_result() {
+            serialized_data.insert(k, v.into_bdd().to_bytes());
+        }
+        TreeData {
+            network: self.network.to_string(),
+            data: serialized_data,
+        }
+    }
 
     fn get_results_internal(
         elapsed: Duration,
@@ -126,5 +145,30 @@ impl ComputationResult {
         };
 
         serde_wasm_bindgen::to_value(&result).unwrap()
+    }
+}
+
+impl TreeData {
+    pub fn to_js(&self) -> JsValue {
+        serde_wasm_bindgen::to_value(self).unwrap()
+    }
+
+    pub fn from_js(value: JsValue) -> TreeData {
+        serde_wasm_bindgen::from_value(value).unwrap()
+    }
+
+    pub fn build_tree(&self) -> Result<Bdt, String> {
+        let network = BooleanNetwork::try_from(self.network.as_str())?;
+        let graph = SymbolicAsyncGraph::new(&network)?;
+        let mut native_data = HashMap::new();
+        for (k, v) in &self.data {
+            // WTF this conversion?
+            let v_copy = v.clone();
+            let mut slide = v_copy.as_slice();
+            let native_v = GraphColors::new(Bdd::from_bytes(&mut slide), graph.symbolic_context());
+            native_data.insert(k.clone(), native_v);
+        }
+
+        Ok(Bdt::new_from_graph(native_data, &graph, &network))
     }
 }

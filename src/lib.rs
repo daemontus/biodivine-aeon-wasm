@@ -10,7 +10,6 @@ use wasm_bindgen::prelude::*;
 pub use conversions::read_layout;
 pub use conversions::Conversions;
 
-mod all;
 mod bdt;
 mod graph_task_context;
 mod scc;
@@ -20,6 +19,7 @@ mod utils;
 mod boolean_network;
 mod computation;
 mod conversions;
+mod decision_tree;
 
 #[derive(Serialize, Deserialize)]
 pub struct CardinalityData {

@@ -1,7 +1,9 @@
-use crate::scc::ProgressTracker;
+use std::sync::atomic::{AtomicBool, Ordering};
+
 use biodivine_lib_param_bn::symbolic_async_graph::{GraphColoredVertices, SymbolicAsyncGraph};
 use instant::Instant;
-use std::sync::atomic::{AtomicBool, Ordering};
+
+use crate::scc::ProgressTracker;
 
 /// A context object which aggregates all necessary information about a running task working with
 /// a symbolic graph.
@@ -41,6 +43,7 @@ impl GraphTaskContext {
         self.is_cancelled.load(Ordering::SeqCst)
     }
 
+    /*
     /// Set the status of this task to cancel.
     ///
     /// Return true if the computation was set to cancelled by this call, false if it was
@@ -48,14 +51,17 @@ impl GraphTaskContext {
     pub fn cancel(&self) -> bool {
         !self.is_cancelled.swap(true, Ordering::SeqCst)
     }
+     */
 
     /// Indicate that the given set still needs to be processed by the task.
     pub fn update_remaining(&self, remaining: &GraphColoredVertices) {
         self.progress.update_remaining(remaining);
     }
 
+    /*
     /// Output a string which represent the percentage of remaining state space.
     pub fn get_percent_string(&self) -> String {
         self.progress.get_percent_string()
     }
+     */
 }

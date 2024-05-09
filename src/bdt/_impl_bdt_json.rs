@@ -4,7 +4,7 @@ use crate::scc::Class;
 use crate::util::functional::Functional;
 use crate::util::index_type::IndexType;
 use biodivine_lib_param_bn::symbolic_async_graph::GraphColors;
-use json::{object, JsonValue};
+use json::*;
 use std::collections::{HashMap, HashSet};
 
 impl BdtNode {
@@ -85,12 +85,12 @@ impl Bdt {
             let node_json = self.node_to_json(top);
             if node_json.has_key("left") {
                 let left = node_json["left"].as_usize().unwrap();
-                let left_id = IndexType::<BdtNode, Bdt>::try_from(left, self).unwrap();
+                let left_id = IndexType::<BdtNode, Bdt>::try_from_index(left, self).unwrap();
                 stack.push(left_id);
             }
             if node_json.has_key("right") {
                 let right = node_json["right"].as_usize().unwrap();
-                let right_id = IndexType::<BdtNode, Bdt>::try_from(right, self).unwrap();
+                let right_id = IndexType::<BdtNode, Bdt>::try_from_index(right, self).unwrap();
                 stack.push(right_id);
             }
             if ids.contains(&top) {
@@ -111,7 +111,7 @@ impl Bdt {
             if result.has_key("attribute_id") {
                 let attr_id: AttributeId = result["attribute_id"]
                     .as_usize()
-                    .and_then(|i| IndexType::<Attribute, Bdt>::try_from(i, self))
+                    .and_then(|i| IndexType::<Attribute, Bdt>::try_from_index(i, self))
                     .unwrap();
                 result
                     .insert("attribute_name", self[attr_id].name.clone())

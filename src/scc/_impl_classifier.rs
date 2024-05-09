@@ -1,10 +1,12 @@
-use super::{Behaviour, Class, Classifier};
+use std::collections::HashMap;
+use std::sync::Mutex;
+
 use biodivine_lib_param_bn::biodivine_std::traits::Set;
 use biodivine_lib_param_bn::symbolic_async_graph::{
     GraphColoredVertices, GraphColors, GraphVertices, SymbolicAsyncGraph,
 };
-use std::collections::HashMap;
-use std::sync::Mutex;
+
+use super::{Behaviour, Class, Classifier};
 
 impl Classifier {
     pub fn new(graph: &SymbolicAsyncGraph) -> Classifier {

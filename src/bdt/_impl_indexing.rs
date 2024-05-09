@@ -9,7 +9,7 @@ impl IndexType<BdtNode, Bdt> for BdtNodeId {
         self.0
     }
 
-    fn try_from(index: usize, collection: &Bdt) -> Option<Self> {
+    fn try_from_index(index: usize, collection: &Bdt) -> Option<Self> {
         BdtNodeId(index).take_if(|i| collection.storage.contains_key(&i.0))
     }
 }
@@ -19,7 +19,7 @@ impl IndexType<Attribute, Bdt> for AttributeId {
         self.0
     }
 
-    fn try_from(index: usize, collection: &Bdt) -> Option<Self> {
+    fn try_from_index(index: usize, collection: &Bdt) -> Option<Self> {
         AttributeId(index).take_if(|i| i.0 < collection.attributes.len())
     }
 }

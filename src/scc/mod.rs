@@ -22,7 +22,7 @@ pub enum Behaviour {
     Disorder,
 }
 
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
 pub struct Class(Vec<Behaviour>);
 
 pub struct Classifier {
@@ -30,6 +30,7 @@ pub struct Classifier {
     attractors: Mutex<Vec<(GraphColoredVertices, HashMap<Behaviour, GraphColors>)>>,
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct ProgressTracker {
     total: Mutex<f64>,
     remaining: Mutex<f64>,

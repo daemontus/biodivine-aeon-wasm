@@ -329,7 +329,7 @@ fn variable_contexts(function: &FnUpdate) -> Vec<Vec<VariableId>> {
     match function {
         FnUpdate::Const(_) => vec![],
         FnUpdate::Var(_) => vec![],
-        FnUpdate::Param(_, args) => {
+        FnUpdate::Param(_, _args) => {
             // TODO: This is just a simplification to even make this work.
             vec![function.collect_arguments()]
         }
