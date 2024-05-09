@@ -148,6 +148,7 @@ impl ComputationResult {
     }
 }
 
+#[wasm_bindgen]
 impl TreeData {
     pub fn to_js(&self) -> JsValue {
         serde_wasm_bindgen::to_value(self).unwrap()
@@ -156,6 +157,9 @@ impl TreeData {
     pub fn from_js(value: JsValue) -> TreeData {
         serde_wasm_bindgen::from_value(value).unwrap()
     }
+}
+
+impl TreeData {
 
     pub fn build_tree(&self) -> Result<Bdt, String> {
         let network = BooleanNetwork::try_from(self.network.as_str())?;
