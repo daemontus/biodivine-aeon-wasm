@@ -1,4 +1,4 @@
-use crate::VariableData;
+use crate::boolean_network::VariableData;
 use std::collections::HashMap;
 
 pub fn infer_new_position(data: &HashMap<u64, VariableData>) -> (f64, f64) {
