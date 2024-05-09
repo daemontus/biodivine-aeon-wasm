@@ -111,15 +111,16 @@ impl ComputationResult {
         Self::get_results_internal(self.elapsed, &self.task, &self.classifier)
     }
 
-    pub fn get_tree_data(&self) -> TreeData {
+    pub fn get_tree_data(&self) -> JsValue {
         let mut serialized_data = HashMap::new();
         for (k, v) in self.classifier.export_result() {
             serialized_data.insert(k, v.into_bdd().to_bytes());
         }
-        TreeData {
+        let data = TreeData {
             network: self.network.to_string(),
             data: serialized_data,
-        }
+        };
+        serde_wasm_bindgen::to_value(&data).unwrap()
     }
 
     fn get_results_internal(

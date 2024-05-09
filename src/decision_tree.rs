@@ -13,8 +13,9 @@ pub struct DecisionTree {
 
 #[wasm_bindgen]
 impl DecisionTree {
-    pub fn from_result(result: &TreeData) -> Result<DecisionTree, String> {
-        let inner = result.build_tree()?;
+    pub fn from_tree_data(result: JsValue) -> Result<DecisionTree, String> {
+        let data = serde_wasm_bindgen::from_value::<TreeData>(result).unwrap();
+        let inner = data.build_tree()?;
         Ok(DecisionTree { inner })
     }
 
