@@ -1,7 +1,7 @@
 use crate::scc::ProgressTracker;
 use biodivine_lib_param_bn::symbolic_async_graph::{GraphColoredVertices, SymbolicAsyncGraph};
-use std::sync::atomic::{AtomicBool, Ordering};
 use instant::Instant;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 /// A context object which aggregates all necessary information about a running task working with
 /// a symbolic graph.

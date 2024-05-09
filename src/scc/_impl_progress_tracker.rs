@@ -53,6 +53,11 @@ impl ProgressTracker {
     pub fn get_remaining_fraction(&self) -> f64 {
         let remaining = { *self.remaining.lock().unwrap() };
         let total = { *self.total.lock().unwrap() };
+
+        if remaining == 0.0 || total == 0.0 {
+            return 1.0;
+        }
+
         remaining / total
     }
 
@@ -66,13 +71,13 @@ impl ProgressTracker {
 
     pub fn is_finished(&self) -> bool {
         let remaining = { *self.remaining.lock().unwrap() };
-        remaining == 0.0
+        remaining == 0.0 || self.processes.load(Ordering::SeqCst) == 0
     }
 
     /// Output a string which represent the percentage of remaining state space.
     pub fn get_percent_string(&self) -> String {
         format!(
-            "{:.2}% ({:.2}% states, {} processes)",
+            "{:.2} log-% ({:.2}% states, {} processes)",
             100.0 - (self.get_remaining_log_fraction() * 100.0),
             100.0 - (self.get_remaining_fraction() * 100.0),
             self.processes.load(Ordering::SeqCst),

@@ -66,5 +66,7 @@ pub fn xie_beerel_attractors<F, G>(
 
         universe = universe.minus(&pivot_basin);
     }
+
+    ctx.update_remaining(&universe);
     ctx.progress.set_process_count(0);
 }

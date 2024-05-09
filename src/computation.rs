@@ -46,6 +46,7 @@ impl ComputationResult {
         let classifier = Classifier::new(&graph);
 
         let graph_task_context = GraphTaskContext::new();
+        graph_task_context.restart(&graph);
         // Now we can actually start the computation...
 
         // First, perform ITGR reduction.
@@ -56,7 +57,10 @@ impl ComputationResult {
             |task| {
                 let elapsed = Instant::now() - task.started;
                 on_progress
-                    .call1(on_progress, &Self::get_results_internal(elapsed, task, &classifier))
+                    .call1(
+                        on_progress,
+                        &Self::get_results_internal(elapsed, task, &classifier),
+                    )
                     .unwrap();
             },
         );
@@ -73,7 +77,10 @@ impl ComputationResult {
             |task| {
                 let elapsed = Instant::now() - task.started;
                 on_progress
-                    .call1(on_progress, &Self::get_results_internal(elapsed, task, &classifier))
+                    .call1(
+                        on_progress,
+                        &Self::get_results_internal(elapsed, task, &classifier),
+                    )
                     .unwrap();
             },
         );
