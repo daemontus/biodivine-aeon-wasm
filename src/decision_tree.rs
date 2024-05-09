@@ -1,4 +1,5 @@
 use json::{array, object, JsonValue};
+use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::bdt::{AttributeId, Bdt, BdtNodeId};
@@ -17,33 +18,33 @@ impl DecisionTree {
         Ok(DecisionTree { inner })
     }
 
-    pub fn get_full_tree(&self) -> String {
-        self.inner.to_json().to_string()
+    pub fn get_full_tree(&self) -> JsValue {
+        JsValue::from_str(self.inner.to_json().to_string().as_str())
     }
 
-    pub fn get_attributes(&self, node_id: usize) -> Option<String> {
-        let id = BdtNodeId::try_from_index(node_id, &self.inner)?;
-        Some(self.inner.attribute_gains_json(id).to_string())
+    pub fn get_attributes(&self, node_id: usize) -> JsValue {
+        let id = BdtNodeId::try_from_index(node_id, &self.inner).unwrap();
+        JsValue::from_str(self.inner.attribute_gains_json(id).to_string().as_str())
     }
 
     pub fn get_stability_data(&self) {
         unimplemented!()
     }
 
-    pub fn apply_attribute(&mut self, node_id: usize, attribute_id: usize) -> Option<String> {
-        let node_id = BdtNodeId::try_from_index(node_id, &self.inner)?;
-        let attribute_id = AttributeId::try_from_index(attribute_id, &self.inner)?;
-        let (left, right) = self.inner.make_decision(node_id, attribute_id).ok()?;
+    pub fn apply_attribute(&mut self, node_id: usize, attribute_id: usize) -> JsValue {
+        let node_id = BdtNodeId::try_from_index(node_id, &self.inner).unwrap();
+        let attribute_id = AttributeId::try_from_index(attribute_id, &self.inner).unwrap();
+        let (left, right) = self.inner.make_decision(node_id, attribute_id).unwrap();
         let changes = array![
             self.inner.node_to_json(node_id),
             self.inner.node_to_json(left),
             self.inner.node_to_json(right),
         ];
-        Some(changes.to_string())
+        JsValue::from_str(changes.to_string().as_str())
     }
 
-    pub fn revert_decision(&mut self, node_id: usize) -> Option<String> {
-        let node_id = BdtNodeId::try_from_index(node_id, &self.inner)?;
+    pub fn revert_decision(&mut self, node_id: usize) -> JsValue {
+        let node_id = BdtNodeId::try_from_index(node_id, &self.inner).unwrap();
         let removed = self.inner.revert_decision(node_id);
         let removed = removed
             .into_iter()
@@ -53,14 +54,14 @@ impl DecisionTree {
             "node": self.inner.node_to_json(node_id),
             "removed": JsonValue::from(removed)
         };
-        Some(response.to_string())
+        JsValue::from_str(response.to_string().as_str())
     }
 
-    pub fn auto_expand(&mut self, node_id: usize, depth: u32) -> Option<String> {
-        let node_id = BdtNodeId::try_from_index(node_id, &self.inner)?;
+    pub fn auto_expand(&mut self, node_id: usize, depth: u32) -> JsValue {
+        let node_id = BdtNodeId::try_from_index(node_id, &self.inner).unwrap();
         let depth = if depth > 10 { 10 } else { depth };
         let changed = self.inner.auto_expand(node_id, depth);
-        Some(self.inner.to_json_partial(&changed).to_string())
+        JsValue::from_str(self.inner.to_json_partial(&changed).to_string().as_str())
     }
 
     pub fn apply_tree_precision(&mut self, precision: u32) {
