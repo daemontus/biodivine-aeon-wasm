@@ -22,6 +22,10 @@ impl Class {
     pub fn get_vector(&self) -> Vec<Behaviour> {
         self.0.clone()
     }
+
+    pub fn get_str_vector(&self) -> Vec<String> {
+        self.0.iter().map(|it| format!("{:?}", it)).collect()
+    }
 }
 
 impl Display for Class {

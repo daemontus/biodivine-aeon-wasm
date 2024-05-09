@@ -160,7 +160,6 @@ impl TreeData {
 }
 
 impl TreeData {
-
     pub fn build_tree(&self) -> Result<Bdt, String> {
         let network = BooleanNetwork::try_from(self.network.as_str())?;
         let graph = SymbolicAsyncGraph::new(&network)?;
