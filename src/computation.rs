@@ -43,8 +43,8 @@ pub struct ResultsSummary {
 
 #[derive(Serialize, Deserialize)]
 pub struct ResultsSummaryRow {
-    sat_count: f64,
-    phenotype: Vec<Behaviour>,
+    cardinality: f64,
+    class: Vec<String>,
 }
 
 #[wasm_bindgen]
@@ -133,8 +133,8 @@ impl ComputationResult {
         let mut data_result = Vec::new();
         for (k, v) in &data {
             data_result.push(ResultsSummaryRow {
-                sat_count: v.approx_cardinality(),
-                phenotype: k.get_vector(),
+                cardinality: v.approx_cardinality(),
+                class: k.get_str_vector(),
             })
         }
 
