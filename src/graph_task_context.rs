@@ -1,6 +1,7 @@
 use crate::scc::ProgressTracker;
 use biodivine_lib_param_bn::symbolic_async_graph::{GraphColoredVertices, SymbolicAsyncGraph};
 use std::sync::atomic::{AtomicBool, Ordering};
+use instant::Instant;
 
 /// A context object which aggregates all necessary information about a running task working with
 /// a symbolic graph.
@@ -8,6 +9,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 /// We use this to avoid passing each context variable as a (mutable) reference. It is also easier
 /// to implement some utility methods this way.
 pub struct GraphTaskContext {
+    pub started: Instant,
     pub is_cancelled: AtomicBool,
     pub progress: ProgressTracker,
 }
@@ -22,6 +24,7 @@ impl GraphTaskContext {
     /// Create a new task context.
     pub fn new() -> GraphTaskContext {
         GraphTaskContext {
+            started: Instant::now(),
             is_cancelled: AtomicBool::new(false),
             progress: ProgressTracker::new(),
         }
@@ -38,7 +41,7 @@ impl GraphTaskContext {
         self.is_cancelled.load(Ordering::SeqCst)
     }
 
-    /// Set the status of this task to cancelled.
+    /// Set the status of this task to cancel.
     ///
     /// Return true if the computation was set to cancelled by this call, false if it was
     /// cancelled previously.

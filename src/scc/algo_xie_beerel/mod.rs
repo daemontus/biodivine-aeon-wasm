@@ -6,14 +6,16 @@ use biodivine_lib_param_bn::VariableId;
 
 /// Uses a simplified Xie-Beerel algorithm adapted to coloured setting to find all bottom
 /// SCCs in the given `universe` set. It only tests transitions using `active_variables`.
-pub fn xie_beerel_attractors<F>(
+pub fn xie_beerel_attractors<F, G>(
     ctx: &GraphTaskContext,
     graph: &SymbolicAsyncGraph,
     universe: &GraphColoredVertices,
     active_variables: &[VariableId],
     on_component: F,
+    mut on_step: G,
 ) where
     F: Fn(GraphColoredVertices) + Send + Sync,
+    G: FnMut(&GraphTaskContext),
 {
     ctx.progress.set_process_count(1);
     let mut universe = universe.clone();
@@ -59,6 +61,8 @@ pub fn xie_beerel_attractors<F>(
         if !pivot_component.is_empty() && !ctx.is_cancelled() {
             on_component(pivot_component);
         }
+
+        on_step(ctx);
 
         universe = universe.minus(&pivot_basin);
     }

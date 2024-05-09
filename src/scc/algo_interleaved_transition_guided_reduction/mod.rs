@@ -23,10 +23,11 @@ mod _impl_scheduler;
 /// transitions in the graph (other variables are effectively constant).
 ///
 /// If cancelled, the result is still valid, but not necessarily complete.
-pub fn interleaved_transition_guided_reduction(
+pub fn interleaved_transition_guided_reduction<F: FnMut(&GraphTaskContext) -> ()>(
     ctx: &GraphTaskContext,
     graph: &SymbolicAsyncGraph,
     initial: GraphColoredVertices,
+    mut on_step: F,
 ) -> (GraphColoredVertices, Vec<VariableId>) {
     let variables = graph.variables().collect::<Vec<_>>();
     let mut scheduler = Scheduler::new(ctx, initial, variables);
@@ -41,6 +42,7 @@ pub fn interleaved_transition_guided_reduction(
     ctx.progress.set_process_count(process_count); // * 2 because each will spawn one extra.
 
     while !scheduler.is_done() {
+        on_step(ctx);
         scheduler.step(graph);
         if ctx.is_cancelled() {
             break;
