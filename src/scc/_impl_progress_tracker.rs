@@ -66,6 +66,11 @@ impl ProgressTracker {
     pub fn get_remaining_log_fraction(&self) -> f64 {
         let remaining = { *self.remaining.lock().unwrap() };
         let total = { *self.total.lock().unwrap() };
+
+        if remaining == 0.0 || total == 0.0 {
+            return 1.0;
+        }
+
         remaining.log2() / total.log2()
     }
 
