@@ -45,7 +45,7 @@ impl BdtNode {
                     object! {
                         "type" => "leaf".to_string(),
                         "cardinality" => major_params.approx_cardinality(),
-                        "class" => major_class.to_string(),
+                        "class" => major_class.get_str_vector(),
                         "all_classes" => class_list_to_json(classes),
                     }
                 } else {
